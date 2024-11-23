@@ -32,6 +32,7 @@ import Cursor exposing (current)
 import Util.Time exposing (durationBetween)
 import Http exposing (post)
 import Util.Time exposing (formatDuration)
+import Html.Attributes exposing (style)
 
 
 {-| Show posts as a HTML [table](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table)
@@ -55,16 +56,29 @@ Relevant library functions:
 -- Shows a row for each post with corresponding fields formatted appropriately.
 postTable : PostsConfig -> Time.Posix -> List Post -> Html Msg
 postTable configuration currentTime posts =
+    let
+        tableStyle =
+            [ class "post-table"
+            , style "width" "100%"
+            , style "border-collapse" "collapse"
+            , style "margin-top" "20px"
+            ]
+        headerCellStyle =
+            [ style "padding" "10px"
+            , style "border" "1px solid #ddd"
+            , style "color" "#42073f"
+            ]
+    in
     div[]
-        [table [class "post-table"]
+        [table tableStyle
         [
           thead [] -- table header row containing column names
-              [ tr []
-                  [ th [] [text "Score"]
-                  , th [] [text "Title"]
-                  , th [] [text "Type"]
-                  , th [] [text "Posted date"]
-                  , th [] [text "Link"]
+              [ tr [style "background-color" "#f9f9f9"]
+                  [ th headerCellStyle [text "Score"]
+                  , th headerCellStyle [text "Title"]
+                  , th headerCellStyle [text "Type"]
+                  , th headerCellStyle [text "Posted date"]
+                  , th headerCellStyle [text "Link"]
                   ]
               ]       
           , tbody [] (List.map (postRow currentTime) (filterPosts configuration posts)) -- the posts are filtered according to the current configuration.
@@ -76,11 +90,17 @@ postTable configuration currentTime posts =
 -- Helper function to create a single row in the table for a post.
 postRow : Time.Posix -> Post -> Html Msg
 postRow currentTime post =
-    tr []
-        [ td [class "post-score"] [text (String.fromInt post.score)] -- display the post's score
-        , td [class "post-title"] [text post.title] -- display the title
-        , td [class "post-type"] [text post.type_] -- display the type
-        , td [class "post-time"] -- display the posts's timestamp and relative duration
+    let
+        cellStyle =
+            [ style "padding" "10px"
+            , style "border" "1px solid #ddd"
+            ]
+    in
+    tr [style "border-bottom" "1px solid #ddd"]
+        [ td (cellStyle ++ [ class "post-score"])[text (String.fromInt post.score)] -- display the post's score
+        , td (cellStyle ++ [ class "post-title"]) [text post.title] -- display the title
+        , td (cellStyle ++ [ class "post-type"]) [text post.type_] -- display the type
+        , td (cellStyle ++ [ class "post-time"]) -- display the posts's timestamp and relative duration
             [ text 
                 (formatTime Time.utc post.time -- format the post's timestamp and append the relative duration 
                     ++ (case durationBetween post.time currentTime of
@@ -89,9 +109,9 @@ postRow currentTime post =
                        )
                 )
             ]
-        , td [ class "post-url" ] -- display the post's link if available
+        , td (cellStyle ++ [ class "post-url"]) -- display the post's link if available
             [ case post.url of
-                Just url -> a [ href url ] [ text "Link" ]
+                Just url -> a [href url, style "color" "purple"] [text "Link"]
                 Nothing -> text "No link"
             ]
         ]
@@ -113,58 +133,78 @@ Relevant functions:
 -}
 postsConfigView : PostsConfig -> Html Msg
 postsConfigView configuration = 
-    div [class "posts-config"] -- main container for the configuration options
-        [ div [class "config-item"] -- configuration item for the posts per page setting
-            [ label [for "select-posts-per-page"] [text "Posts per page: "]
-        , select 
-            [ id "select-posts-per-page"
-            , onInput (\x -> case String.toInt x of
-                                Just newPosts -> ConfigChanged (ChangePostsToShow newPosts) -- change posts per page when user selects a new option
-                                Nothing -> ConfigChanged (ChangePostsToShow configuration.postsToShow) -- if the input is invalid, fallback to current setting
-                      )
+    let
+        configItemStyle =
+            [ style "margin-bottom" "10px" ]
+
+        labelStyle =
+            [ style "font-weight" "bold"
+            , style "margin-right" "5px"
+            , style "color" "#42073f"
             ]
-            [ option [value "10", selected (configuration.postsToShow == 10)] [text "10"]
-            , option [value "25", selected (configuration.postsToShow == 25)] [text "25"]
-            , option [value "50", selected (configuration.postsToShow == 50)] [text "50"]
+
+        selectStyle =
+            [ style "padding" "5px"
+            , style "border" "1px solid #ccc"
+            , style "border-radius" "4px"
+            , style "background-color" "#fff"
+            , style "color" "#333"
             ]
+    in
+    div [ class "posts-config", style "padding" "10px", style "border" "1px solid #ddd", style "border-radius" "5px", style "background-color" "#f9f9f9" ] -- main container for the configuration options
+        [ div configItemStyle -- configuration item for the posts per page setting
+            [ label (labelStyle ++ [ for "select-posts-per-page" ]) [ text "Posts per page: " ]
+            , select 
+                ( [ id "select-posts-per-page"
+                  , onInput (\x -> case String.toInt x of
+                                      Just newPosts -> ConfigChanged (ChangePostsToShow newPosts) -- change posts per page when user selects a new option
+                                      Nothing -> ConfigChanged (ChangePostsToShow configuration.postsToShow)-- if the input is invalid, fallback to current setting
+                    ) ]
+                ++ selectStyle
+                ) 
+                [ option [ value "10", selected (configuration.postsToShow == 10) ] [ text "10" ]
+                , option [ value "25", selected (configuration.postsToShow == 25) ] [ text "25" ]
+                , option [ value "50", selected (configuration.postsToShow == 50) ] [ text "50" ]
+                ]
             ]
-        , div [class "config-item"] -- configuration item for sorting options
-            [ label [for "select-sort-by"] [text "Sort by: "]
-        , select 
-            [ id "select-sort-by"
-            , onInput (\x -> case sortFromString x of
-                                Just sort -> ConfigChanged (ChangeSortBy sort) -- change the sorting criteria based on user input
-                                Nothing -> ConfigChanged (ChangeSortBy None) -- fallback to "None" if an invalid option is selected
-                      )
+        , div configItemStyle -- configuration item for sorting options
+            [ label (labelStyle ++ [ for "select-sort-by" ]) [ text "Sort by: " ]
+            , select 
+                ( [ id "select-sort-by"
+                  , onInput (\x -> case sortFromString x of
+                                      Just sort -> ConfigChanged (ChangeSortBy sort) -- change the sorting criteria based on user input
+                                      Nothing -> ConfigChanged (ChangeSortBy None) -- fallback to "None" if an invalid option is selected
+                    ) ]
+                ++ selectStyle
+                ) 
+                (List.map 
+                    (\sort -> 
+                        option 
+                            [ value (sortToString sort) -- set the value of each sort option based on its string representation
+                            , selected (configuration.sortBy == sort) -- select the current sort option based on the current configuration
+                            ] 
+                            [ text (sortToString sort) ]
+                    ) sortOptions
+                )
             ]
-            (List.map 
-                (\sort -> 
-                    option 
-                        [ value (sortToString sort) -- set the value of each sort option based on its string representation
-                        , selected (configuration.sortBy == sort)  -- select the current sort option based on the current configuration
-                        ] 
-                        [text (sortToString sort)]
-                ) sortOptions
-            )
+        , div configItemStyle -- configuration item for changing job posts visibility
+            [ label (labelStyle ++ [ for "checkbox-show-job-posts" ]) [ text "Show job posts: " ]
+            , input 
+                [ id "checkbox-show-job-posts"
+                , type_ "checkbox"
+                , checked configuration.showJobs -- check the box if "showJobs" is true in configuration
+                , onCheck (\isChecked -> ConfigChanged (ChangeShowJobPosts isChecked)) -- update the config when checkbox is checked/unchecked
+                ] 
+                []
             ]
-        , div [class "config-item"] -- configuration item for changing job posts visibility
-            [ label [for "checkbox-show-job-posts"] [text "Show job posts: "]
-        , input 
-            [ id "checkbox-show-job-posts"
-            , type_ "checkbox"
-            , checked configuration.showJobs -- check the box if "showJobs" is true in configuration
-            , onCheck (\isChecked -> ConfigChanged (ChangeShowJobPosts isChecked)) -- update the config when checkbox is checked/unchecked
-            ] 
-            []
-            ]
-        , div [class "config-item"]
-            [ label [for "checkbox-show-text-only-posts"] [text "Show text-only posts: "]
-        , input 
-            [ id "checkbox-show-text-only-posts"
-            , type_ "checkbox"
-            , checked configuration.showTextOnly
-            , onCheck (\isChecked -> ConfigChanged (ChangeShowTextOnlyPost isChecked))
-            ] 
-            []
+        , div configItemStyle -- configuration item for changing text-only posts visibility
+            [ label (labelStyle ++ [ for "checkbox-show-text-only-posts" ]) [ text "Show text-only posts: " ]
+            , input 
+                [ id "checkbox-show-text-only-posts"
+                , type_ "checkbox"
+                , checked configuration.showTextOnly 
+                , onCheck (\isChecked -> ConfigChanged (ChangeShowTextOnlyPost isChecked))
+                ] 
+                []
             ]
         ]

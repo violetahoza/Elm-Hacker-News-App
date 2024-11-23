@@ -12,6 +12,7 @@ import Model.PostsConfig
 import View.Posts exposing (postTable, postsConfigView)
 import Model.PostsConfig exposing (applyChanges)
 import Model.PostsConfig exposing (filterPosts)
+import Html.Attributes exposing (style)
 
 
 prodFlags : Config
@@ -175,10 +176,10 @@ view model =
         body =
             case model.state of
                 Model.Empty _ ->
-                    div [] [ text "Loading" ]
+                    div [style "text-align" "center", style "font-size" "20px"] [ text "Loading" ]
 
                 Model.FailedToLoad err ->
-                    div [] [ text <| "Failed to load: " ++ Debug.toString err ]
+                    div [style "color" "red", style "font-weight" "bold", style "font-size" "20px"] [ text <| "Failed to load: " ++ Debug.toString err ]
 
                 Model.LoadedPosts { config, time, posts } ->
                     div []
@@ -187,12 +188,15 @@ view model =
                         ]
 
                 Model.Loading _ ->
-                    div [] [ text "Loading stories" ]
+                    div [style "text-align" "center"] [ text "Loading stories" ]
 
                 Model.LoadingPosts { currentId } ->
-                    div [] [ text <| "Loading post " ++ String.fromInt currentId ]
+                    div [style "text-align" "center", style "font-size" "20px"] [ text <| "Loading post " ++ String.fromInt currentId ]
 
                 _ ->
                     div [] [ text "Other" ]
     in
-    div [] [ Html.h1 [] [ text title ], body ]
+    div [ style "font-family" "Arial, sans-serif", style "background-color" "#f2f2f2", style "margin" "0", style "padding" "20px" ]
+        [ Html.h1 [ style "color" "#42073f", style "text-align" "center" ] [ text title ]
+        , body
+        ]

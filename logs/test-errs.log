@@ -1,13 +1,49 @@
--- UNFINISHED PARENTHESES - C:\Users\hozas\OneDrive\De toate\facultate\FP\Elm-Project\src\Model\PostsConfig.elm
+-- TYPE MISMATCH - C:\Users\hozas\OneDrive\De toate\facultate\FP\Elm-Project\src\View\Posts.elm
 
-I was expecting to see a closing parenthesis next:
+The 3rd element of this list does not match all the previous elements:
 
-119|         filteredPosts = List.filter ( \post -> (configuration.showJobs && post.type_ == "job") 
-120|                                                 || (configuration.showTextOnly && post.url /= Nothing)
-                                                                                                           ^
-Try adding a ) to see if that helps!
+238|                 [ id "select-sort-by"
+239|                 , onInput (\x -> case sortFromString x of
+240|                                     Just sort -> ConfigChanged (ChangeSortBy sort)
+241|                                     Nothing -> ConfigChanged (ChangeSortBy None)
+242|                     )
+243|>                , selectStyle
+244|                 ] 
 
-Note: I can get confused by indentation in cases like this, so maybe you have a
-closing parenthesis but it is not indented enough?
+This `selectStyle` value is a:
+
+    List (Html.Attribute msg)
+
+But all the previous elements in the list are:
+
+    Html.Attribute Msg
+
+Hint: Everything in a list must be the same type of value. This way, we never
+run into unexpected values partway through a List.map, List.foldl, etc. Read
+<https://elm-lang.org/0.19.1/custom-types> to learn how to “mix” types.
+
+-- TYPE MISMATCH - C:\Users\hozas\OneDrive\De toate\facultate\FP\Elm-Project\src\View\Posts.elm
+
+The 3rd element of this list does not match all the previous elements:
+
+223|                 [ id "select-posts-per-page"
+224|                 , onInput (\x -> case String.toInt x of
+225|                                     Just newPosts -> ConfigChanged (ChangePostsToShow newPosts)
+226|                                     Nothing -> ConfigChanged (ChangePostsToShow configuration.postsToShow)
+227|                     )
+228|>                , selectStyle
+229|                 ] 
+
+This `selectStyle` value is a:
+
+    List (Html.Attribute msg)
+
+But all the previous elements in the list are:
+
+    Html.Attribute Msg
+
+Hint: Everything in a list must be the same type of value. This way, we never
+run into unexpected values partway through a List.map, List.foldl, etc. Read
+<https://elm-lang.org/0.19.1/custom-types> to learn how to “mix” types.
 
 `elm make` failed with exit code 1.

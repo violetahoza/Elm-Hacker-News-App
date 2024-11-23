@@ -9863,6 +9863,8 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$html$Html$td = _VirtualDom_node('td');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
@@ -9874,17 +9876,27 @@ var $elm$time$Time$Zone = F2(
 var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$View$Posts$postRow = F2(
 	function (currentTime, post) {
+		var cellStyle = _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+				A2($elm$html$Html$Attributes$style, 'border', '1px solid #ddd')
+			]);
 		return A2(
 			$elm$html$Html$tr,
-			_List_Nil,
+			_List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$style, 'border-bottom', '1px solid #ddd')
+				]),
 			_List_fromArray(
 				[
 					A2(
 					$elm$html$Html$td,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-score')
-						]),
+					_Utils_ap(
+						cellStyle,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('post-score')
+							])),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
@@ -9892,30 +9904,36 @@ var $author$project$View$Posts$postRow = F2(
 						])),
 					A2(
 					$elm$html$Html$td,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-title')
-						]),
+					_Utils_ap(
+						cellStyle,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('post-title')
+							])),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(post.title)
 						])),
 					A2(
 					$elm$html$Html$td,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-type')
-						]),
+					_Utils_ap(
+						cellStyle,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('post-type')
+							])),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(post.type_)
 						])),
 					A2(
 					$elm$html$Html$td,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-time')
-						]),
+					_Utils_ap(
+						cellStyle,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('post-time')
+							])),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
@@ -9933,10 +9951,12 @@ var $author$project$View$Posts$postRow = F2(
 						])),
 					A2(
 					$elm$html$Html$td,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-url')
-						]),
+					_Utils_ap(
+						cellStyle,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('post-url')
+							])),
 					_List_fromArray(
 						[
 							function () {
@@ -9947,7 +9967,8 @@ var $author$project$View$Posts$postRow = F2(
 									$elm$html$Html$a,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$href(url)
+											$elm$html$Html$Attributes$href(url),
+											A2($elm$html$Html$Attributes$style, 'color', 'purple')
 										]),
 									_List_fromArray(
 										[
@@ -9966,6 +9987,19 @@ var $elm$html$Html$th = _VirtualDom_node('th');
 var $elm$html$Html$thead = _VirtualDom_node('thead');
 var $author$project$View$Posts$postTable = F3(
 	function (configuration, currentTime, posts) {
+		var tableStyle = _List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('post-table'),
+				A2($elm$html$Html$Attributes$style, 'width', '100%'),
+				A2($elm$html$Html$Attributes$style, 'border-collapse', 'collapse'),
+				A2($elm$html$Html$Attributes$style, 'margin-top', '20px')
+			]);
+		var headerCellStyle = _List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+				A2($elm$html$Html$Attributes$style, 'border', '1px solid #ddd'),
+				A2($elm$html$Html$Attributes$style, 'color', '#42073f')
+			]);
 		return A2(
 			$elm$html$Html$div,
 			_List_Nil,
@@ -9973,10 +10007,7 @@ var $author$project$View$Posts$postTable = F3(
 				[
 					A2(
 					$elm$html$Html$table,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('post-table')
-						]),
+					tableStyle,
 					_List_fromArray(
 						[
 							A2(
@@ -9986,40 +10017,43 @@ var $author$project$View$Posts$postTable = F3(
 								[
 									A2(
 									$elm$html$Html$tr,
-									_List_Nil,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'background-color', '#f9f9f9')
+										]),
 									_List_fromArray(
 										[
 											A2(
 											$elm$html$Html$th,
-											_List_Nil,
+											headerCellStyle,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Score')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_Nil,
+											headerCellStyle,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Title')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_Nil,
+											headerCellStyle,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Type')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_Nil,
+											headerCellStyle,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Posted date')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_Nil,
+											headerCellStyle,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Link')
@@ -10155,50 +10189,73 @@ var $author$project$Model$PostsConfig$sortToString = function (sort) {
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$View$Posts$postsConfigView = function (configuration) {
+	var selectStyle = _List_fromArray(
+		[
+			A2($elm$html$Html$Attributes$style, 'padding', '5px'),
+			A2($elm$html$Html$Attributes$style, 'border', '1px solid #ccc'),
+			A2($elm$html$Html$Attributes$style, 'border-radius', '4px'),
+			A2($elm$html$Html$Attributes$style, 'background-color', '#fff'),
+			A2($elm$html$Html$Attributes$style, 'color', '#333')
+		]);
+	var labelStyle = _List_fromArray(
+		[
+			A2($elm$html$Html$Attributes$style, 'font-weight', 'bold'),
+			A2($elm$html$Html$Attributes$style, 'margin-right', '5px'),
+			A2($elm$html$Html$Attributes$style, 'color', '#42073f')
+		]);
+	var configItemStyle = _List_fromArray(
+		[
+			A2($elm$html$Html$Attributes$style, 'margin-bottom', '10px')
+		]);
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('posts-config')
+				$elm$html$Html$Attributes$class('posts-config'),
+				A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+				A2($elm$html$Html$Attributes$style, 'border', '1px solid #ddd'),
+				A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#f9f9f9')
 			]),
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('config-item')
-					]),
+				configItemStyle,
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$for('select-posts-per-page')
-							]),
+						_Utils_ap(
+							labelStyle,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$for('select-posts-per-page')
+								])),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Posts per page: ')
 							])),
 						A2(
 						$elm$html$Html$select,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$id('select-posts-per-page'),
-								$elm$html$Html$Events$onInput(
-								function (x) {
-									var _v0 = $elm$core$String$toInt(x);
-									if (_v0.$ === 'Just') {
-										var newPosts = _v0.a;
-										return $author$project$Model$ConfigChanged(
-											$author$project$Model$PostsConfig$ChangePostsToShow(newPosts));
-									} else {
-										return $author$project$Model$ConfigChanged(
-											$author$project$Model$PostsConfig$ChangePostsToShow(configuration.postsToShow));
-									}
-								})
-							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$id('select-posts-per-page'),
+									$elm$html$Html$Events$onInput(
+									function (x) {
+										var _v0 = $elm$core$String$toInt(x);
+										if (_v0.$ === 'Just') {
+											var newPosts = _v0.a;
+											return $author$project$Model$ConfigChanged(
+												$author$project$Model$PostsConfig$ChangePostsToShow(newPosts));
+										} else {
+											return $author$project$Model$ConfigChanged(
+												$author$project$Model$PostsConfig$ChangePostsToShow(configuration.postsToShow));
+										}
+									})
+								]),
+							selectStyle),
 						_List_fromArray(
 							[
 								A2(
@@ -10238,40 +10295,41 @@ var $author$project$View$Posts$postsConfigView = function (configuration) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('config-item')
-					]),
+				configItemStyle,
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$for('select-sort-by')
-							]),
+						_Utils_ap(
+							labelStyle,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$for('select-sort-by')
+								])),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Sort by: ')
 							])),
 						A2(
 						$elm$html$Html$select,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$id('select-sort-by'),
-								$elm$html$Html$Events$onInput(
-								function (x) {
-									var _v1 = $author$project$Model$PostsConfig$sortFromString(x);
-									if (_v1.$ === 'Just') {
-										var sort = _v1.a;
-										return $author$project$Model$ConfigChanged(
-											$author$project$Model$PostsConfig$ChangeSortBy(sort));
-									} else {
-										return $author$project$Model$ConfigChanged(
-											$author$project$Model$PostsConfig$ChangeSortBy($author$project$Model$PostsConfig$None));
-									}
-								})
-							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$id('select-sort-by'),
+									$elm$html$Html$Events$onInput(
+									function (x) {
+										var _v1 = $author$project$Model$PostsConfig$sortFromString(x);
+										if (_v1.$ === 'Just') {
+											var sort = _v1.a;
+											return $author$project$Model$ConfigChanged(
+												$author$project$Model$PostsConfig$ChangeSortBy(sort));
+										} else {
+											return $author$project$Model$ConfigChanged(
+												$author$project$Model$PostsConfig$ChangeSortBy($author$project$Model$PostsConfig$None));
+										}
+									})
+								]),
+							selectStyle),
 						A2(
 							$elm$core$List$map,
 							function (sort) {
@@ -10294,18 +10352,17 @@ var $author$project$View$Posts$postsConfigView = function (configuration) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('config-item')
-					]),
+				configItemStyle,
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$for('checkbox-show-job-posts')
-							]),
+						_Utils_ap(
+							labelStyle,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$for('checkbox-show-job-posts')
+								])),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Show job posts: ')
@@ -10327,18 +10384,17 @@ var $author$project$View$Posts$postsConfigView = function (configuration) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('config-item')
-					]),
+				configItemStyle,
 				_List_fromArray(
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$for('checkbox-show-text-only-posts')
-							]),
+						_Utils_ap(
+							labelStyle,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$for('checkbox-show-text-only-posts')
+								])),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Show text-only posts: ')
@@ -10369,7 +10425,11 @@ var $author$project$Main$view = function (model) {
 			case 'Empty':
 				return A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+							A2($elm$html$Html$Attributes$style, 'font-size', '20px')
+						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('Loading')
@@ -10378,7 +10438,12 @@ var $author$project$Main$view = function (model) {
 				var err = _v0.a;
 				return A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'color', 'red'),
+							A2($elm$html$Html$Attributes$style, 'font-weight', 'bold'),
+							A2($elm$html$Html$Attributes$style, 'font-size', '20px')
+						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
@@ -10399,7 +10464,10 @@ var $author$project$Main$view = function (model) {
 			case 'Loading':
 				return A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('Loading stories')
@@ -10408,7 +10476,11 @@ var $author$project$Main$view = function (model) {
 				var currentId = _v0.a.currentId;
 				return A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+							A2($elm$html$Html$Attributes$style, 'font-size', '20px')
+						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
@@ -10426,12 +10498,22 @@ var $author$project$Main$view = function (model) {
 	}();
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'font-family', 'Arial, sans-serif'),
+				A2($elm$html$Html$Attributes$style, 'background-color', '#f2f2f2'),
+				A2($elm$html$Html$Attributes$style, 'margin', '0'),
+				A2($elm$html$Html$Attributes$style, 'padding', '20px')
+			]),
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$h1,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'color', '#42073f'),
+						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(title)
@@ -26135,7 +26217,7 @@ var $author$project$Test$Generated$Main$main = A2(
 _Platform_export({'Test':{'Generated':{'Main':{'init':$author$project$Test$Generated$Main$main($elm$json$Json$Decode$int)(0)}}}});}(this));
 return this.Elm;
 })({});
-var pipeFilename = "\\\\.\\pipe\\elm_test-17076-1";
+var pipeFilename = "\\\\.\\pipe\\elm_test-27196-1";
 var net = require('net'),
   client = net.createConnection(pipeFilename);
 
