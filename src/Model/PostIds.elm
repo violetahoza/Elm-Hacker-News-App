@@ -61,8 +61,8 @@ If the `Cursor` is focused on the last element, it returns `Nothing`
 -}
 advance : PostIds -> Maybe ( Int, PostIds )
 advance (PostIds cursor) =
-    case Cursor.forward cursor of -- move the cursor to the next post id
-        Just nextCursor -> Just ( Cursor.current nextCursor, PostIds nextCursor )
+    case Cursor.forward cursor of -- try to move the cursor to the next post id
+        Just nextCursor -> Just ( Cursor.current nextCursor, PostIds nextCursor ) -- if a next cursor exists, return a tuple: the 1st el is the current post id from  the next cursor, and the 2nd el is a new PostIds with the updated cursor
         Nothing -> Nothing -- If there are no more elements, return Nothing
     -- Nothing
     -- Debug.todo "advance"
@@ -78,8 +78,8 @@ advance (PostIds cursor) =
 -}
 fromList : List Int -> Maybe PostIds
 fromList ids =
-    Cursor.fromList ids -- create a cursor from the list and wrap it in PostIds
-        |> Maybe.map PostIds
+    Cursor.fromList ids -- create a cursor from the list of post ids
+        |> Maybe.map PostIds -- wrap the cursor in the PostIds type
 
 
 {-| Decode a list of post ids.

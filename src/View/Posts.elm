@@ -58,40 +58,44 @@ postTable configuration currentTime posts =
     div[]
         [table [class "post-table"]
         [
-          thead []
+          thead [] -- table header row containing column names
               [ tr []
-                  [ th [class "post-score"] [text "Score"]
-                  , th [class "post-title"] [text "Title"]
-                  , th [class "post-type"] [text "Type"]
-                  , th [class "post-time"] [text "Posted date"]
-                  , th [class "post-url"] [text "Link"]
+                  [ th [] [text "Score"]
+                  , th [] [text "Title"]
+                  , th [] [text "Type"]
+                  , th [] [text "Posted date"]
+                  , th [] [text "Link"]
                   ]
               ]       
-          , tbody [] (List.map (postRow currentTime) posts)
+          , tbody [] (List.map (postRow currentTime) (filterPosts configuration posts)) -- the posts are filtered according to the current configuration.
         ]
         ]
     -- div [] []
     -- Debug.todo "postTable"
 
 -- Helper function to create a single row in the table for a post.
-postRow: Time.Posix -> Post -> Html Msg
+postRow : Time.Posix -> Post -> Html Msg
 postRow currentTime post =
-  let
-    relativeDuration = case durationBetween post.time currentTime of
+    tr []
+        [ td [class "post-score"] [text (String.fromInt post.score)] -- display the post's score
+        , td [class "post-title"] [text post.title] -- display the title
+        , td [class "post-type"] [text post.type_] -- display the type
+        , td [class "post-time"] -- display the posts's timestamp and relative duration
+            [ text 
+                (formatTime Time.utc post.time -- format the post's timestamp and append the relative duration 
+                    ++ (case durationBetween post.time currentTime of
                             Just duration -> " (" ++ formatDuration duration ++ ")"
                             Nothing -> ""
-  in
-    tr []
-      [ td [class "post-score"] [text (String.fromInt post.score)]
-      , td [class "post-title"] [text post.title]
-      , td [class "post-type"] [text post.type_]
-      , td [class "post-time"] [text (formatTime Time.utc post.time ++ relativeDuration)]
-      , td [class "post-url"] 
-          [case post.url of
-              Just url -> a [href url] [text "Link"]
-              Nothing -> text "No link"
-          ]
-      ]
+                       )
+                )
+            ]
+        , td [ class "post-url" ] -- display the post's link if available
+            [ case post.url of
+                Just url -> a [ href url ] [ text "Link" ]
+                Nothing -> text "No link"
+            ]
+        ]
+
 
 {-| Show the configuration options for the posts table
 
@@ -107,17 +111,16 @@ Relevant functions:
   - [Html.Events.onInput](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onInput)
 
 -}
-
 postsConfigView : PostsConfig -> Html Msg
 postsConfigView configuration = 
-    div [class "posts-config"]
-        [ div [class "config-item"]
+    div [class "posts-config"] -- main container for the configuration options
+        [ div [class "config-item"] -- configuration item for the posts per page setting
             [ label [for "select-posts-per-page"] [text "Posts per page: "]
         , select 
             [ id "select-posts-per-page"
             , onInput (\x -> case String.toInt x of
-                                Just newPosts -> ConfigChanged (ChangePostsToShow newPosts)
-                                Nothing -> ConfigChanged (ChangePostsToShow configuration.postsToShow) -- fallback to current value)
+                                Just newPosts -> ConfigChanged (ChangePostsToShow newPosts) -- change posts per page when user selects a new option
+                                Nothing -> ConfigChanged (ChangePostsToShow configuration.postsToShow) -- if the input is invalid, fallback to current setting
                       )
             ]
             [ option [value "10", selected (configuration.postsToShow == 10)] [text "10"]
@@ -125,29 +128,32 @@ postsConfigView configuration =
             , option [value "50", selected (configuration.postsToShow == 50)] [text "50"]
             ]
             ]
-        , div [class "config-item"]
+        , div [class "config-item"] -- configuration item for sorting options
             [ label [for "select-sort-by"] [text "Sort by: "]
         , select 
             [ id "select-sort-by"
-            , onInput (\x -> ConfigChanged (ChangeSortBy (sortFromString x |> Maybe.withDefault None)))
+            , onInput (\x -> case sortFromString x of
+                                Just sort -> ConfigChanged (ChangeSortBy sort) -- change the sorting criteria based on user input
+                                Nothing -> ConfigChanged (ChangeSortBy None) -- fallback to "None" if an invalid option is selected
+                      )
             ]
             (List.map 
                 (\sort -> 
                     option 
-                        [ value (sortToString sort)
-                        , selected (configuration.sortBy == sort)
+                        [ value (sortToString sort) -- set the value of each sort option based on its string representation
+                        , selected (configuration.sortBy == sort)  -- select the current sort option based on the current configuration
                         ] 
                         [text (sortToString sort)]
                 ) sortOptions
             )
             ]
-        , div [class "config-item"]
+        , div [class "config-item"] -- configuration item for changing job posts visibility
             [ label [for "checkbox-show-job-posts"] [text "Show job posts: "]
         , input 
             [ id "checkbox-show-job-posts"
             , type_ "checkbox"
-            , checked configuration.showJobs
-            , onCheck (\isChecked -> ConfigChanged (ChangeShowJobPosts isChecked))
+            , checked configuration.showJobs -- check the box if "showJobs" is true in configuration
+            , onCheck (\isChecked -> ConfigChanged (ChangeShowJobPosts isChecked)) -- update the config when checkbox is checked/unchecked
             ] 
             []
             ]

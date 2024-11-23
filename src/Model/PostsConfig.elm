@@ -87,8 +87,8 @@ defaultConfig =
 type Change 
     = ChangePostsToShow Int -- update the nr of posts to show
     | ChangeSortBy SortBy -- update the sorting criteria
-    | ChangeShowJobPosts Bool -- toggle the visibility of job posts
-    | ChangeShowTextOnlyPost Bool -- toggle the visibility of text only posts
+    | ChangeShowJobPosts Bool -- change the visibility of job posts
+    | ChangeShowTextOnlyPost Bool -- change the visibility of text only posts
 
 
 {-| Given a change and the current configuration, return a new configuration with the changes applied
@@ -96,10 +96,10 @@ type Change
 applyChanges : Change -> PostsConfig -> PostsConfig
 applyChanges change configuration =
     case change of 
-        ChangePostsToShow newPostsToShow -> {configuration | postsToShow = newPostsToShow} 
-        ChangeSortBy newSortBy -> {configuration | sortBy = newSortBy}
-        ChangeShowJobPosts isChecked -> {configuration | showJobs = isChecked}
-        ChangeShowTextOnlyPost isChecked -> {configuration | showTextOnly = isChecked}
+        ChangePostsToShow newPostsToShow -> {configuration | postsToShow = newPostsToShow} -- update the nr of posts to show in the configuration
+        ChangeSortBy newSortBy -> {configuration | sortBy = newSortBy} -- update the sorting criteria 
+        ChangeShowJobPosts isChecked -> {configuration | showJobs = isChecked} -- change the visibility of job posts 
+        ChangeShowTextOnlyPost isChecked -> {configuration | showTextOnly = isChecked} -- change the visibility of text only posts 
 
 {-| Given the configuration and a list of posts, return the relevant subset of posts according to the configuration
 
@@ -116,11 +116,11 @@ filterPosts : PostsConfig -> List Post -> List Post
 filterPosts configuration posts =
     posts -- start with the complete list of posts
         |> List.filter (\post ->
-            (configuration.showTextOnly && post.url /= Nothing) 
-            || (configuration.showJobs && post.type_ == "job")
+            (configuration.showTextOnly || post.url /= Nothing) -- only include posts with links when showTextOnly is false
+            && (configuration.showJobs || post.type_ /= "job") -- exclude job posts when showJobs is false
         )
-        |> List.sortWith (sortToCompareFn configuration.sortBy) -- sort the filtered posts based on the selected SortBy configuration
-        |> List.take configuration.postsToShow -- limit the sorted posts to the number specified in postsToShow
+        |> List.take configuration.postsToShow -- limit the filtered posts to the number specified in postsToShow
+        |> List.sortWith (sortToCompareFn configuration.sortBy) -- sort the limited posts based on the selected SortBy configuration
     -- []
-    -- Debug.todo "filterPosts"
+    -- Debug.todo "filterPosts"filterPosts : PostsConfig -> List Post -> List Post
 

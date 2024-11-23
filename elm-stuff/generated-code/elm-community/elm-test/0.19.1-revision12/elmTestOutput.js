@@ -9533,6 +9533,60 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Model$PostsConfig$sortToCompareFn = function (sort) {
+	switch (sort.$) {
+		case 'Score':
+			return F2(
+				function (postA, postB) {
+					return A2($elm$core$Basics$compare, postB.score, postA.score);
+				});
+		case 'Title':
+			return F2(
+				function (postA, postB) {
+					return A2($elm$core$Basics$compare, postA.title, postB.title);
+				});
+		case 'Posted':
+			return F2(
+				function (postA, postB) {
+					return A2(
+						$elm$core$Basics$compare,
+						$elm$time$Time$posixToMillis(postB.time),
+						$elm$time$Time$posixToMillis(postA.time));
+				});
+		default:
+			return F2(
+				function (_v1, _v2) {
+					return $elm$core$Basics$EQ;
+				});
+	}
+};
+var $elm$core$List$sortWith = _List_sortWith;
+var $author$project$Model$PostsConfig$filterPosts = F2(
+	function (configuration, posts) {
+		return A2(
+			$elm$core$List$sortWith,
+			$author$project$Model$PostsConfig$sortToCompareFn(configuration.sortBy),
+			A2(
+				$elm$core$List$take,
+				configuration.postsToShow,
+				A2(
+					$elm$core$List$filter,
+					function (post) {
+						return (configuration.showTextOnly || (!_Utils_eq(post.url, $elm$core$Maybe$Nothing))) && (configuration.showJobs || (post.type_ !== 'job'));
+					},
+					posts)));
+	});
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Util$Time$durationBetween = F2(
@@ -9544,17 +9598,6 @@ var $author$project$Util$Time$durationBetween = F2(
 		var days = (timeDifference / (((24 * 60) * 60) * 1000)) | 0;
 		return (timeDifference > 0) ? $elm$core$Maybe$Just(
 			{days: days, hours: hours, minutes: minutes, seconds: seconds}) : $elm$core$Maybe$Nothing;
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
 	});
 var $author$project$Util$Time$formatComponent = F2(
 	function (value, unit) {
@@ -9831,15 +9874,6 @@ var $elm$time$Time$Zone = F2(
 var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$View$Posts$postRow = F2(
 	function (currentTime, post) {
-		var relativeDuration = function () {
-			var _v1 = A2($author$project$Util$Time$durationBetween, post.time, currentTime);
-			if (_v1.$ === 'Just') {
-				var duration = _v1.a;
-				return ' (' + ($author$project$Util$Time$formatDuration(duration) + ')');
-			} else {
-				return '';
-			}
-		}();
 		return A2(
 			$elm$html$Html$tr,
 			_List_Nil,
@@ -9887,7 +9921,15 @@ var $author$project$View$Posts$postRow = F2(
 							$elm$html$Html$text(
 							_Utils_ap(
 								A2($author$project$Util$Time$formatTime, $elm$time$Time$utc, post.time),
-								relativeDuration))
+								function () {
+									var _v0 = A2($author$project$Util$Time$durationBetween, post.time, currentTime);
+									if (_v0.$ === 'Just') {
+										var duration = _v0.a;
+										return ' (' + ($author$project$Util$Time$formatDuration(duration) + ')');
+									} else {
+										return '';
+									}
+								}()))
 						])),
 					A2(
 					$elm$html$Html$td,
@@ -9898,9 +9940,9 @@ var $author$project$View$Posts$postRow = F2(
 					_List_fromArray(
 						[
 							function () {
-							var _v0 = post.url;
-							if (_v0.$ === 'Just') {
-								var url = _v0.a;
+							var _v1 = post.url;
+							if (_v1.$ === 'Just') {
+								var url = _v1.a;
 								return A2(
 									$elm$html$Html$a,
 									_List_fromArray(
@@ -9949,50 +9991,35 @@ var $author$project$View$Posts$postTable = F3(
 										[
 											A2(
 											$elm$html$Html$th,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('post-score')
-												]),
+											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Score')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('post-title')
-												]),
+											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Title')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('post-type')
-												]),
+											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Type')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('post-time')
-												]),
+											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Posted date')
 												])),
 											A2(
 											$elm$html$Html$th,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('post-url')
-												]),
+											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text('Link')
@@ -10005,7 +10032,7 @@ var $author$project$View$Posts$postTable = F3(
 							A2(
 								$elm$core$List$map,
 								$author$project$View$Posts$postRow(currentTime),
-								posts))
+								A2($author$project$Model$PostsConfig$filterPosts, configuration, posts)))
 						]))
 				]));
 	});
@@ -10234,12 +10261,15 @@ var $author$project$View$Posts$postsConfigView = function (configuration) {
 								$elm$html$Html$Attributes$id('select-sort-by'),
 								$elm$html$Html$Events$onInput(
 								function (x) {
-									return $author$project$Model$ConfigChanged(
-										$author$project$Model$PostsConfig$ChangeSortBy(
-											A2(
-												$elm$core$Maybe$withDefault,
-												$author$project$Model$PostsConfig$None,
-												$author$project$Model$PostsConfig$sortFromString(x))));
+									var _v1 = $author$project$Model$PostsConfig$sortFromString(x);
+									if (_v1.$ === 'Just') {
+										var sort = _v1.a;
+										return $author$project$Model$ConfigChanged(
+											$author$project$Model$PostsConfig$ChangeSortBy(sort));
+									} else {
+										return $author$project$Model$ConfigChanged(
+											$author$project$Model$PostsConfig$ChangeSortBy($author$project$Model$PostsConfig$None));
+									}
 								})
 							]),
 						A2(
@@ -24999,49 +25029,6 @@ var $author$project$TestUtils$expectEach = F2(
 					$elm$core$List$length(l) - 1)),
 			l);
 	});
-var $author$project$Model$PostsConfig$sortToCompareFn = function (sort) {
-	switch (sort.$) {
-		case 'Score':
-			return F2(
-				function (postA, postB) {
-					return A2($elm$core$Basics$compare, postB.score, postA.score);
-				});
-		case 'Title':
-			return F2(
-				function (postA, postB) {
-					return A2($elm$core$Basics$compare, postA.title, postB.title);
-				});
-		case 'Posted':
-			return F2(
-				function (postA, postB) {
-					return A2(
-						$elm$core$Basics$compare,
-						$elm$time$Time$posixToMillis(postB.time),
-						$elm$time$Time$posixToMillis(postA.time));
-				});
-		default:
-			return F2(
-				function (_v1, _v2) {
-					return $elm$core$Basics$EQ;
-				});
-	}
-};
-var $elm$core$List$sortWith = _List_sortWith;
-var $author$project$Model$PostsConfig$filterPosts = F2(
-	function (configuration, posts) {
-		return A2(
-			$elm$core$List$take,
-			configuration.postsToShow,
-			A2(
-				$elm$core$List$sortWith,
-				$author$project$Model$PostsConfig$sortToCompareFn(configuration.sortBy),
-				A2(
-					$elm$core$List$filter,
-					function (post) {
-						return (configuration.showTextOnly && (!_Utils_eq(post.url, $elm$core$Maybe$Nothing))) && (configuration.showJobs && (post.type_ === 'job'));
-					},
-					posts)));
-	});
 var $elm_explorations$test$Expect$onFail = F2(
 	function (str, expectation) {
 		if (expectation.$ === 'Pass') {
@@ -26148,7 +26135,7 @@ var $author$project$Test$Generated$Main$main = A2(
 _Platform_export({'Test':{'Generated':{'Main':{'init':$author$project$Test$Generated$Main$main($elm$json$Json$Decode$int)(0)}}}});}(this));
 return this.Elm;
 })({});
-var pipeFilename = "\\\\.\\pipe\\elm_test-14200-1";
+var pipeFilename = "\\\\.\\pipe\\elm_test-17076-1";
 var net = require('net'),
   client = net.createConnection(pipeFilename);
 
