@@ -1,0 +1,13 @@
+-- UNFINISHED PARENTHESES - C:\Users\hozas\OneDrive\De toate\facultate\FP\Elm-Project\src\Model\PostsConfig.elm
+
+I was expecting to see a closing parenthesis next:
+
+119|         filteredPosts = List.filter ( \post -> (configuration.showJobs && post.type_ == "job") 
+120|                                                 || (configuration.showTextOnly && post.url /= Nothing)
+                                                                                                           ^
+Try adding a ) to see if that helps!
+
+Note: I can get confused by indentation in cases like this, so maybe you have a
+closing parenthesis but it is not indented enough?
+
+`elm make` failed with exit code 1.
